@@ -8,40 +8,86 @@
 
 'use strict';
 
+require('dotenv').config();
+const DBWrapper = require('../db-wrapper');
+
+let dbWrapper = new DBWrapper(process.env.MONGO_URI);
+
 module.exports = function (app) {
 
   app.route('/api/books')
-    .get(function (req, res){
-      //response will be array of book objects
-      //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
-    })
-    
-    .post(function (req, res){
-      let title = req.body.title;
-      //response will contain new book object including atleast _id and title
-    })
-    
-    .delete(function(req, res){
-      //if successful response will be 'complete delete successful'
-    });
+    .get(async (req, res) => {
+      try {
+        let books = await dbWrapper.getAllBooksCommentCount()
 
+        res.json(books)
+      } catch (err) {
+        res.send(err.message)
+      }
+    })
+
+    .post(async (req, res) => {
+      let title = req.body.title
+
+      try {
+        let newBook = await dbWrapper.saveNewBook(title);
+
+        res.json({
+          _id: newBook._id,
+          title: newBook.title
+        });
+      } catch (err) {
+        res.send(err.message);
+      }
+    })
+
+    .delete(async (req, res) => {
+      try {
+        await dbWrapper.deleteAllBooks();
+
+        res.send('complete delete successful');
+      } catch (err) {
+        res.send(err.message);
+      }
+    });
 
 
   app.route('/api/books/:id')
-    .get(function (req, res){
+    .get(async (req, res) => {
       let bookid = req.params.id;
-      //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
+
+      try {
+        let book = await dbWrapper.getBook(bookid);
+
+        res.json(book);
+      } catch (err) {
+        res.send(err.message);
+      }
     })
-    
-    .post(function(req, res){
+
+    .post(async (req, res) => {
       let bookid = req.params.id;
       let comment = req.body.comment;
-      //json res format same as .get
+
+      try {
+        let updatedBook = await dbWrapper.addComment(bookid, comment)
+
+        res.json(updatedBook)
+      } catch (err) {
+        res.send(err.message)
+      }
     })
-    
-    .delete(function(req, res){
+
+    .delete(async (req, res) => {
       let bookid = req.params.id;
-      //if successful response will be 'delete successful'
+
+      try {
+        await dbWrapper.deleteBook(bookid)
+
+        res.send('delete successful')
+      } catch (err) {
+        res.send(err.message)
+      }
     });
-  
+
 };
