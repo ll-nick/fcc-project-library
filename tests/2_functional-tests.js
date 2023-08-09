@@ -42,6 +42,7 @@ suite('Functional Tests', function () {
 
       test('Test POST /api/books with title', function (done) {
         chai.request(server)
+          .keepOpen()
           .post('/api/books')
           .send({ title: 'test' })
           .end(function (err, res) {
@@ -55,6 +56,7 @@ suite('Functional Tests', function () {
 
       test('Test POST /api/books with no title given', function (done) {
         chai.request(server)
+          .keepOpen()
           .post('/api/books')
           .end(function (err, res) {
             assert.equal(res.status, 200);
@@ -70,6 +72,7 @@ suite('Functional Tests', function () {
 
       test('Test GET /api/books', function (done) {
         chai.request(server)
+          .keepOpen()
           .get('/api/books')
           .end(function (err, res) {
             assert.equal(res.status, 200);
@@ -88,6 +91,7 @@ suite('Functional Tests', function () {
 
       test('Test GET /api/books/[id] with id not in db', function (done) {
         chai.request(server)
+          .keepOpen()
           .get('/api/books/000000000000000000000000')
           .end(function (err, res) {
             assert.equal(res.status, 200);
@@ -99,6 +103,7 @@ suite('Functional Tests', function () {
       test('Test GET /api/books/[id] with valid id in db', function (done) {
         let id;
         chai.request(server)
+          .keepOpen()
           .post('/api/books')
           .send({ title: 'test-get-api' })
           .end(function (err, res) {
@@ -124,6 +129,7 @@ suite('Functional Tests', function () {
       test('Test POST /api/books/[id] with comment', function (done) {
         let id;
         chai.request(server)
+          .keepOpen()
           .post('/api/books')
           .send({ title: 'test-post-comment' })
           .end(function (err, res) {
@@ -145,6 +151,7 @@ suite('Functional Tests', function () {
       test('Test POST /api/books/[id] without comment field', function (done) {
         let id;
         chai.request(server)
+          .keepOpen()
           .post('/api/books')
           .send({ title: 'test-post-comment-missing-field' })
           .end(function (err, res) {
@@ -161,6 +168,7 @@ suite('Functional Tests', function () {
 
       test('Test POST /api/books/[id] with comment, id not in db', function (done) {
         chai.request(server)
+          .keepOpen()
           .post('/api/books/000000000000000000000000')
           .send({ comment: 'test-post-comment' })
           .end(function (err, res) {
@@ -177,6 +185,7 @@ suite('Functional Tests', function () {
       test('Test DELETE /api/books/[id] with valid id in db', function (done) {
         let id;
         chai.request(server)
+          .keepOpen()
           .post('/api/books')
           .send({ title: 'test-delete-book' })
           .end(function (err, res) {
@@ -193,6 +202,7 @@ suite('Functional Tests', function () {
 
       test('Test DELETE /api/books/[id] with  id not in db', function (done) {
         chai.request(server)
+          .keepOpen()
           .delete('/api/books/000000000000000000000000')
           .end(function (err, res) {
             assert.equal(res.status, 200);
